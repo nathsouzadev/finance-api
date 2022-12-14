@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { randomUUID } from 'crypto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { OperationService } from '../operation/operation.service';
 import { PrismaService } from '../database/prisma.service';
 import { ClientsController } from './clients.controller';
@@ -216,5 +216,32 @@ describe('ClientsController', () => {
         ]
       }
     })
+  })
+
+  it('should throw an error if end_date and today is more than 90 days', async () => {
+    const mockInvalidDate = new Date()
+    mockInvalidDate.setDate(mockInvalidDate.getDate() - 91)
+    expect(async() => controller.getReleases(
+      mockRequest as Request,
+      mockUserId,
+      {
+        start_date: '2022-12-12',
+        end_date: mockInvalidDate.toISOString().split('T')[0],
+      }
+    )).rejects.toThrow(
+      new Error('Invalid date interval. To get operations before 90 days go to /:id/old-releases')
+    );
+  })
+
+  it('should return a link to download releases', async() => {
+    const mockResponse: Partial<Response> = {
+      download: jest.fn()
+    }
+    const response = await controller.downloadRelease(
+      mockResponse as Response,
+      mockRequest as Request,
+      mockUserId
+    )
+    expect(mockResponse.download).toHaveBeenCalledWith('my-file.txt')
   })
 });

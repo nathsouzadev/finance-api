@@ -14,10 +14,14 @@ export const calculateDays = (
 
 const validateDateFormat = (date: string): boolean => {
   const dateToValidate = date.split('-');
+  if(Number(dateToValidate[1]) < 1 || Number(dateToValidate[1]) > 12){
+    throw new Error('Invalid month. Inform value between 1 and 12');
+  }
+
   if (
-    dateToValidate[0].length !== 2 ||
+    dateToValidate[2].length !== 2 ||
     dateToValidate[1].length !== 2 ||
-    dateToValidate[2].length !== 4
+    dateToValidate[0].length !== 4
   ) {
     return false;
   }
