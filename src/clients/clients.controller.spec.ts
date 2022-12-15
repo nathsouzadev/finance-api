@@ -7,6 +7,7 @@ import { ClientsController } from './clients.controller';
 import { UserRepository } from './repository/user.repository';
 import { ClientsService } from './service/clients.service';
 import { OperationRepository } from '../operation/repository/operation.repository';
+import { DownloadFileService } from '../dowloadFile/downloadFile.service';
 
 describe('ClientsController', () => {
   let controller: ClientsController;
@@ -26,6 +27,7 @@ describe('ClientsController', () => {
       providers: [
         ClientsService,
         PrismaService,
+        DownloadFileService,
         {
           provide: UserRepository,
           useValue: {
@@ -35,7 +37,9 @@ describe('ClientsController', () => {
         },
         {
           provide: OperationRepository,
-          useValue: {}
+          useValue: {
+
+          }
         },
         OperationService
       ],
@@ -221,7 +225,7 @@ describe('ClientsController', () => {
   it('should throw an error if end_date and today is more than 90 days', async () => {
     const mockInvalidDate = new Date()
     mockInvalidDate.setDate(mockInvalidDate.getDate() - 91)
-    expect(async() => controller.getReleases(
+    await expect(controller.getReleases(
       mockRequest as Request,
       mockUserId,
       {
@@ -230,18 +234,21 @@ describe('ClientsController', () => {
       }
     )).rejects.toThrow(
       new Error('Invalid date interval. To get operations before 90 days go to /:id/old-releases')
-    );
+    )
   })
 
   it('should return a link to download releases', async() => {
+    const mockGetFile = jest.spyOn(mockClientsService, 'getFileToDownload').mockImplementation(() => Promise.resolve({ fileToDownload: `./download/${mockUserId}.txt` }))
+    
     const mockResponse: Partial<Response> = {
       download: jest.fn()
     }
-    const response = await controller.downloadRelease(
+    await controller.downloadRelease(
       mockResponse as Response,
       mockRequest as Request,
       mockUserId
     )
-    expect(mockResponse.download).toHaveBeenCalledWith('my-file.txt')
+    expect(mockGetFile).toHaveBeenCalledWith(mockUserId)
+    expect(mockResponse.download).toHaveBeenCalledWith(`./download/${mockUserId}.txt`)
   })
 });

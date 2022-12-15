@@ -4,11 +4,13 @@ import { OperationRepository } from '../../operation/repository/operation.reposi
 import { OperationService } from '../../operation/operation.service';
 import { UserRepository } from '../repository/user.repository';
 import { ClientsService } from './clients.service';
+import { DownloadFileService } from '../../dowloadFile/downloadFile.service';
 
 describe('ClientsService', () => {
   let service: ClientsService;
   let mockUserRepository: UserRepository;
   let mockOperationService: OperationService;
+  let mockDownloadFileService: DownloadFileService;
 
   const mockUserId = randomUUID()
 
@@ -59,6 +61,12 @@ describe('ClientsService', () => {
             getOperationsByDate: jest.fn(),
             getTotalOperationsByUserId: jest.fn()
           }
+        },
+        {
+          provide: DownloadFileService,
+          useValue: {
+            createFile: jest.fn()
+          }
         }
       ]
     }).compile();
@@ -66,6 +74,7 @@ describe('ClientsService', () => {
     service = module.get<ClientsService>(ClientsService);
     mockUserRepository = module.get<UserRepository>(UserRepository)
     mockOperationService = module.get<OperationService>(OperationService)
+    mockDownloadFileService = module.get<DownloadFileService>(DownloadFileService)
   });
 
   it('should be return client balance', async () => {
@@ -237,5 +246,12 @@ describe('ClientsService', () => {
     const totalPages = await service.getTotalPagesWithOperations(mockUserId)
     expect(mockGetTotalOperations).toHaveBeenCalledWith(mockUserId)
     expect(totalPages).toBe(2)
+  })
+
+  it('should return link to dowload file with operations', async () => {
+    const mockCreateFile = jest.spyOn(mockDownloadFileService, 'createFile').mockImplementation(() => Promise.resolve({ fileToDownload: `./download/${mockUserId}.txt` }))
+    const linkToDocument = await service.getFileToDownload(mockUserId)
+    expect(mockCreateFile).toHaveBeenCalledWith(mockUserId)
+    expect(linkToDocument).toMatchObject({ fileToDownload: `./download/${mockUserId}.txt` })
   })
 });

@@ -27,8 +27,9 @@ export class ClientsController {
     @Param('id') id: string,
     @Query(new ValidationPipe()) query: QueryDTO
   ) {
+
     const today = new Date().toISOString().split('T')[0];
-    if(calculateDays(today, query.end_date) > 90){
+    if(calculateDays(today, query.end_date) > 90) {
       throw new BadRequestException('Invalid date interval. To get operations before 90 days go to /:id/old-releases')
     }
 
@@ -46,11 +47,8 @@ export class ClientsController {
     @Req() request: Request,
     @Param('id') id: string
   ) {
-    const fileContent = 'This is the content of the text file.';
-    const fileName = 'my-file.txt';
-    
-    await fs.writeFile('my-file.txt', fileContent);
+    const fileToDownload = await this.clientsService.getFileToDownload(id)
 
-    return response.download(fileName)
+    return response.download(fileToDownload.fileToDownload)
   }
 }

@@ -23,7 +23,7 @@
     "seed:db": "npx prisma db seed",
     "clear:db": "ts-node ./test/configDb.ts",
     "ci:local": "yarn test && yarn clear:db && yarn seed:db && yarn test:e2e",
-    "local": "yarn db && yarn prisma migrate deploy && yarn seed:db && yarn test && yarn test:e2e"
+    "local": "mkdir download && yarn db && yarn prisma migrate deploy && yarn seed:db && yarn test && yarn test:e2e"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -80,6 +80,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "clearMocks": true,
+    "resetMocks": true,
+    "restoreMocks": true
   }
 }

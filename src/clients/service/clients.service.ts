@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DownloadFileService } from '../../dowloadFile/downloadFile.service';
 import { OperationService } from '../../operation/operation.service';
 import { OperationByDate } from '../model/operationByDate.model';
 import { OperationByPagination } from '../model/operationByPagination.model';
@@ -9,7 +10,8 @@ export class ClientsService {
 
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly operationService: OperationService
+    private readonly operationService: OperationService,
+    private readonly dowloadFileService: DownloadFileService
   ){}
 
   getBalance = async (userId: string): Promise<{ balance: number }> => {
@@ -73,5 +75,9 @@ export class ClientsService {
     })
 
     return operationByDate
+  }
+
+  getFileToDownload = async (userId: string): Promise<{ fileToDownload: string }> => {
+    return this.dowloadFileService.createFile(userId)
   }
 }

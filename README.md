@@ -46,6 +46,13 @@ Finance API is a service provider to get actual balance from account and operati
 
 You can use the alpha version with datas bellow
 
+#### IMPORTANT
+Use dates considering the actual date.
+
+Example: today is 2022-10-23. To get operations from one day before, you can use 2022-10-22.
+
+The data on local database are generated dynamically every time whe you run the command to configure the database or to run e2e tests.
+
 ---
     curl --location --request GET 'localhost:3000/clients/4e423bda-7c4b-4564-8e86-4b0e4812e7c0/'
 ---
@@ -107,4 +114,10 @@ The response expected from thats call is:
             ]
         }
     }
+---
+
+You can get a file to download with operations with more than 90 days
+
+---
+    curl --location --request GET 'localhost:3000/clients/4e423bda-7c4b-4564-8e86-4b0e4812e7c0/releases?start_date=2022-12-11&end_date=2022-09-15'
 ---
