@@ -21,4 +21,8 @@ export class OperationService {
   getTotalOperationsByUserId = async (userId: string): Promise<{ count: number }> => {
     return this.operationRepository.getTotalOperationsByUserId(userId)
   }
+
+  getOperationsByUserId = async (userId: string): Promise<Operation[]> => {
+    return this.operationRepository.getAllOperationsByUserId(userId)
+  }
 }

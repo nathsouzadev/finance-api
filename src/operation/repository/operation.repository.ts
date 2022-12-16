@@ -9,4 +9,6 @@ export abstract class OperationRepository {
   ): Promise<Operation[]>
 
   abstract getTotalOperationsByUserId(userId: string): Promise<{ count: number }>
+
+  abstract getAllOperationsByUserId(userId: string): Promise<Operation[]>
 }

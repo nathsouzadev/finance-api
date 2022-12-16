@@ -78,6 +78,8 @@ export class ClientsService {
   }
 
   getFileToDownload = async (userId: string): Promise<{ fileToDownload: string }> => {
-    return this.dowloadFileService.createFile(userId)
+    const operations = await this.operationService.getOperationsByUserId(userId)
+
+    return this.dowloadFileService.createFile(userId, operations)
   }
 }

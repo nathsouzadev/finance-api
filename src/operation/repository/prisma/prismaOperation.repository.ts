@@ -6,6 +6,12 @@ import { OperationRepository } from '../operation.repository';
 @Injectable()
 export class PrismaOperationRepository implements OperationRepository {
   constructor(private readonly prisma: PrismaService) {}
+  getAllOperationsByUserId(userId: string): Promise<Operation[]> {
+    return this.prisma.operation.findMany({
+      where: { userId }
+    })
+  }
+
   getTotalOperationsByUserId = async (userId: string): Promise<{ count: number; }> => {
     const { _count }= await this.prisma.operation.aggregate({
       _count: {

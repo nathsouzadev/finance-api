@@ -41,6 +41,44 @@ describe('ClientsService', () => {
     ]
   }
 
+  const mockOperations = [
+    {
+      id: '35e42af4-5602-4895-9646-c094dddb1d03',
+      userId: mockUserId,
+      createdAt: new Date('2022-12-13'),
+      description: 'Salary',
+      value: 3500,
+    },
+    {
+      id: 'f30d9b30-001b-4968-8ada-7d114a7e2f06',
+      userId: mockUserId,
+      createdAt: new Date('2022-12-13'),
+      description: 'Food',
+      value: -10,
+    },
+    {
+      id: '6f2e7d74-12eb-4a00-8747-42a9e7802c7d',
+      userId: mockUserId,
+      createdAt: new Date('2022-12-12'),
+      description: 'Food',
+      value: -3.67,
+    },
+    {
+      id: '6ba8b7bb-a9ea-4a95-bb22-cfd6d1d2863a',
+      userId: mockUserId,
+      createdAt: new Date('2022-12-12'),
+      description: 'Car',
+      value: -253.49,
+    },
+    {
+      id: '834461ad-0c36-421f-8ca6-677e1043eac5',
+      userId: mockUserId,
+      createdAt: new Date('2022-12-12'),
+      description: 'Tax',
+      value: -300,
+    }
+  ]
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [ 
@@ -59,7 +97,8 @@ describe('ClientsService', () => {
           provide: OperationService,
           useValue: {
             getOperationsByDate: jest.fn(),
-            getTotalOperationsByUserId: jest.fn()
+            getTotalOperationsByUserId: jest.fn(),
+            getOperationsByUserId: jest.fn()
           }
         },
         {
@@ -188,43 +227,7 @@ describe('ClientsService', () => {
   })
 
   it('should return releases splited by date', async () => {
-    const mockGetOperations = jest.spyOn(mockOperationService, 'getOperationsByDate').mockImplementation(() => Promise.resolve([
-      {
-        id: '35e42af4-5602-4895-9646-c094dddb1d03',
-        userId: mockUserId,
-        createdAt: new Date('2022-12-13'),
-        description: 'Salary',
-        value: 3500,
-      },
-      {
-        id: 'f30d9b30-001b-4968-8ada-7d114a7e2f06',
-        userId: mockUserId,
-        createdAt: new Date('2022-12-13'),
-        description: 'Food',
-        value: -10,
-      },
-      {
-        id: '6f2e7d74-12eb-4a00-8747-42a9e7802c7d',
-        userId: mockUserId,
-        createdAt: new Date('2022-12-12'),
-        description: 'Food',
-        value: -3.67,
-      },
-      {
-        id: '6ba8b7bb-a9ea-4a95-bb22-cfd6d1d2863a',
-        userId: mockUserId,
-        createdAt: new Date('2022-12-12'),
-        description: 'Car',
-        value: -253.49,
-      },
-      {
-        id: '834461ad-0c36-421f-8ca6-677e1043eac5',
-        userId: mockUserId,
-        createdAt: new Date('2022-12-12'),
-        description: 'Tax',
-        value: -300,
-      }
-    ]))
+    const mockGetOperations = jest.spyOn(mockOperationService, 'getOperationsByDate').mockImplementation(() => Promise.resolve(mockOperations))
     const operations = await service.getOperationsByDate(
       mockUserId,
       '2022-12-12',
@@ -249,9 +252,12 @@ describe('ClientsService', () => {
   })
 
   it('should return link to dowload file with operations', async () => {
+    const mockGetOperations = jest.spyOn(mockOperationService, 'getOperationsByUserId').mockImplementation(() => Promise.resolve(mockOperations))
     const mockCreateFile = jest.spyOn(mockDownloadFileService, 'createFile').mockImplementation(() => Promise.resolve({ fileToDownload: `./download/${mockUserId}.txt` }))
+    
     const linkToDocument = await service.getFileToDownload(mockUserId)
-    expect(mockCreateFile).toHaveBeenCalledWith(mockUserId)
+    expect(mockGetOperations).toHaveBeenCalledWith(mockUserId)
+    expect(mockCreateFile).toHaveBeenCalledWith(mockUserId, mockOperations)
     expect(linkToDocument).toMatchObject({ fileToDownload: `./download/${mockUserId}.txt` })
   })
 });
