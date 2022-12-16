@@ -9,6 +9,7 @@ import { PrismaOperationRepository } from '../operation/repository/prisma/prisma
 import { OperationRepository } from '../operation/repository/operation.repository';
 import { OperationModule } from '../operation/operation.module';
 import { DownloadFileService } from '../dowloadFile/downloadFile.service';
+import { AppLogger } from '../utils/appLogger';
 
 @Module({
   imports: [OperationModule],
@@ -25,7 +26,8 @@ import { DownloadFileService } from '../dowloadFile/downloadFile.service';
       useClass: PrismaOperationRepository
     },
     OperationService,
-    DownloadFileService
+    DownloadFileService,
+    AppLogger
   ]
 })
 export class ClientsModule {}

@@ -5,6 +5,7 @@ import { OperationService } from '../../operation/operation.service';
 import { UserRepository } from '../repository/user.repository';
 import { ClientsService } from './clients.service';
 import { DownloadFileService } from '../../dowloadFile/downloadFile.service';
+import { AppLogger } from '../../utils/appLogger';
 
 describe('ClientsService', () => {
   let service: ClientsService;
@@ -106,7 +107,8 @@ describe('ClientsService', () => {
           useValue: {
             createFile: jest.fn()
           }
-        }
+        },
+        AppLogger
       ]
     }).compile();
 

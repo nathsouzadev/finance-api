@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AppLogger } from '../../utils/appLogger';
 import { DownloadFileService } from '../../dowloadFile/downloadFile.service';
 import { OperationService } from '../../operation/operation.service';
 import { OperationByDate } from '../model/operationByDate.model';
@@ -9,12 +10,15 @@ import { UserRepository } from '../repository/user.repository';
 export class ClientsService {
 
   constructor(
+    private readonly applogger: AppLogger,
     private readonly userRepository: UserRepository,
     private readonly operationService: OperationService,
     private readonly dowloadFileService: DownloadFileService
   ){}
 
   getBalance = async (userId: string): Promise<{ balance: number }> => {
+    this.applogger.logger({ message: `Getting balance from user ${userId}`}, ClientsService.name)
+
     const { balance } = await this.userRepository.getUserById(userId)
     return { balance }
   }
@@ -25,6 +29,8 @@ export class ClientsService {
     endDate: string,
     page: number
   ): Promise<OperationByPagination> => {
+    this.applogger.logger({ message: `Getting operations with pages from user ${userId}`}, ClientsService.name)
+
     const operations = await this.getOperationsByDate(
       userId,
       startDate,
@@ -42,6 +48,7 @@ export class ClientsService {
   }
 
   getTotalPagesWithOperations = async (userId: string): Promise<number> => {
+    this.applogger.logger({ message: `Getting operations from user ${userId}`}, ClientsService.name)
     const { count } = await this.operationService.getTotalOperationsByUserId(userId)
 
     return Math.ceil(count / 5)
@@ -53,6 +60,8 @@ export class ClientsService {
     endDate: string,
     page: number
   ): Promise<OperationByDate> => {
+    this.applogger.logger({ message: `Getting operations by date from user ${userId}`}, ClientsService.name)
+
     const operationByDate: OperationByDate = {}
     const operations = await this.operationService.getOperationsByDate(
       userId,
@@ -78,6 +87,8 @@ export class ClientsService {
   }
 
   getFileToDownload = async (userId: string): Promise<{ fileToDownload: string }> => {
+    this.applogger.logger({ message: `Getting link to download file with operations from user ${userId}`}, ClientsService.name)
+
     const operations = await this.operationService.getOperationsByUserId(userId)
 
     return this.dowloadFileService.createFile(userId, operations)

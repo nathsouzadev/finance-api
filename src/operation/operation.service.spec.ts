@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { AppLogger } from '../utils/appLogger';
 import { OperationService } from './operation.service';
 import { OperationRepository } from './repository/operation.repository';
 
@@ -35,6 +36,7 @@ describe('OperationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OperationService,
+        AppLogger,
         {
           provide: OperationRepository,
           useValue: {

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DownloadFileService } from './downloadFile.service';
 import { promises as fs } from 'fs';
 import { randomUUID } from 'crypto';
+import { AppLogger } from '../utils/appLogger';
 
 describe('DownloadFileService', () => {
   let service: DownloadFileService;
@@ -26,7 +27,7 @@ describe('DownloadFileService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DownloadFileService],
+      providers: [DownloadFileService, AppLogger],
     }).compile();
 
     service = module.get<DownloadFileService>(DownloadFileService);

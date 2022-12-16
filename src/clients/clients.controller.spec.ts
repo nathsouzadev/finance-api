@@ -8,6 +8,7 @@ import { UserRepository } from './repository/user.repository';
 import { ClientsService } from './service/clients.service';
 import { OperationRepository } from '../operation/repository/operation.repository';
 import { DownloadFileService } from '../dowloadFile/downloadFile.service';
+import { AppLogger } from '../utils/appLogger';
 
 describe('ClientsController', () => {
   let controller: ClientsController;
@@ -41,7 +42,8 @@ describe('ClientsController', () => {
 
           }
         },
-        OperationService
+        OperationService,
+        AppLogger
       ],
     }).compile();
 
